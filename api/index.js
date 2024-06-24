@@ -4,9 +4,14 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User.js');
 const CreateExb = require('./models/create-ex.js');
+const CreateStall = require('./models/stall.js');
 const jwt = require('jsonwebtoken');
 const imageDownloader = require('image-downloader');
 const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const fs = require('fs');
+
+
 require('dotenv').config()
 const app = express();
 
@@ -46,7 +51,7 @@ app.post('/register', async(req, res) =>{
 
 app.post('/login', async(req, res) =>{
     const {email , password} = req.body;
-   const userDoc= await User.findOne({email})
+   const userDoc= await User.findOne({email}) 
    if(userDoc){
     const passOk = bcrypt.compareSync(password, userDoc.password)
     if(passOk){
@@ -140,5 +145,42 @@ app.post('/upload-by-link', async (req, res) =>{
     });
     res.json(newName);
 } )
+
+const photosMiddleware = multer({dest:'uploads/'});
+app.post('/upload', photosMiddleware.array('photos', 100) ,(req, res) =>{
+    const uploadedFiles = [];
+    for(let i=0 ; i<req.files.length ; i++) {
+        const {path, originalname} = req.files[i];
+        const parts = originalname.split('.')
+        const ext = parts[parts.length - 1];
+        const newPath = path + '.' + ext ;
+        fs.renameSync(path, newPath);
+        uploadedFiles.push(newPath.replace('uploads\\', ''))
+    }
+    res.json(uploadedFiles);
+})
+
+app.post('/stall', (req, res)=>{
+    const {token} = req.cookies;
+    const {name ,photos} = req.body;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err ;
+            const createStallDoc = await CreateStall.create({
+                owner: userData.id,
+                name, photos
+            });
+            res.json(createStallDoc);
+        })  
+    
+})
+
+app.get('/stall', (req, res) =>{
+    const {token} = req.cookies;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        const {id} = userData ;
+        res.json(await CreateStall.find({owner:id}) )
+    }) 
+
+});
 
 app.listen(4000);

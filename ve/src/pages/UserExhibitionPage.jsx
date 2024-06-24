@@ -1,4 +1,6 @@
 import { Link, useLocation, useParams } from "react-router-dom"
+import {useEffect, useState } from "react";
+import axios from 'axios';
 
 
 export default function UserExbPage(){
@@ -9,6 +11,13 @@ export default function UserExbPage(){
     if (!exb) {
         return <div>Loading...</div>;
       }
+    
+    const [createStall , setCreateStall ] = useState([]);
+      useEffect(() =>{
+          axios.get('/stall').then(({data})=>{
+              setCreateStall(data);
+          })
+    }, [])
 
     return(
         <div >
@@ -21,6 +30,17 @@ export default function UserExbPage(){
                 </svg>
                 Add New Stall
                 </Link> 
+            </div>
+
+            <div className="mt-4">
+                {createStall.length > 0 && createStall.map(stall =>(
+                    <div className="">
+                        <div className=" bg-gray-200 p-4 rounded-2xl my-4 border border-teal-700">
+                        {stall.name}
+                        </div>
+  
+                    </div>
+                ))}
             </div>
         </div>
     )

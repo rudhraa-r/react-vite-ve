@@ -29,7 +29,7 @@ function App() {
         <Route path='/account/create' element={<CreatePage />}/>
         <Route path='/account/create/new' element={<CreateFormPage />}/>
         <Route path="/account/create/new/:exbTitle" element={<UserExhibitionPage />} />
-        <Route path="/account/create/new/:exbTitle/stall" element={<UserExbStallPage />} />
+        <Route path="/account/create/new/:exbTitle/:stall" element={<UserExbStallPage />} />
 
 
 
