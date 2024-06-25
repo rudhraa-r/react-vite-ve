@@ -35,10 +35,11 @@ export default function UserExbPage(){
             <div className="mt-4">
                 {createStall.length > 0 && createStall.map(stall =>(
                     <div className="">
+                        <Link to={`/account/create/${exb.title}/${stall._id}`} className="">
                         <div className=" bg-gray-200 p-4 rounded-2xl my-4 border border-teal-700">
                         {stall.name}
                         </div>
-  
+                        </Link>
                     </div>
                 ))}
             </div>

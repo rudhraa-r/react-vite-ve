@@ -1,5 +1,5 @@
 import axios from "axios";
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Link, useParams, useLocation } from "react-router-dom"
 
@@ -36,20 +36,32 @@ export default function NewStallPage(){
             });
         })
     }
+    const {exbTitle , stallId} = useParams();
+    
+
+    useEffect(() => {
+        if(!stallId){
+          return
+        }
+        axios.get(`/create/${exbTitle}/`+stallId).then(response =>{
+          const {data} = response;
+          setName(data.name);
+          setAddedPhotos(data.addedPhotos);
+        })
+      }, [stallId])
 
     async function addNewStall(ev) {
-       ev.preventDefault();
-       await axios.post('/stall', {name , addedPhotos});
-       setRedirect(true);
+        ev.preventDefault();
+        const data = {name , addedPhotos};
+        if(stallId){
+            await axios.put('/stall', { stallId, ...data });
+            setRedirect(true);
+        }else{
+            await axios.post('/stall', {name , addedPhotos});
+            setRedirect(true);
+        }
     }
-    const {exbTitle , stall} = useParams();
-
-    //exbpath = pathname.split('/').slice(0, 5).join('/');
-    const location = useLocation();
-    //const { stall } = location.state || {};
-    console.log(location)
-    //console.log(location.state);
-
+    
     if(redirect) {
         return <Navigate to={`/account/create/new/${exbTitle}`} state={{ exb: { title: exbTitle }} } />
     }

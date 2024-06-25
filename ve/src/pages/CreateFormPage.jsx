@@ -1,22 +1,46 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AccountNav from "./AccountNavPage";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 
 
 export default function CreateFormPage(){
 
+    const {id} =useParams();
+    
     const [title , setTitle] = useState('');
     const [description , setDescription] = useState('');
     const [datefrom , setDatefrom] =useState('');
     const [dateto, setDateto] = useState('');
     const [redirect, setRedirect] = useState(false);
 
-    async function createNewExhibition(ev){
+    useEffect(() => {
+      if(!id){
+        return
+      }
+      axios.get('/create/'+id).then(response =>{
+        const {data} = response;
+        setTitle(data.title);
+        setDescription(data.description);
+        setDatefrom(data.datefrom);
+        setDateto(data.dateto);
+      })
+    }, [id])
+    
+
+    async function saveExhibition(ev){
         ev.preventDefault();
         const data ={title, description, datefrom, dateto};
-        await axios.post('/create-exb', data);
-        setRedirect(true);
+        if(id){
+            
+            await axios.put('/create-exb',{id, ...data});
+            setRedirect(true);
+
+        } else {
+            await axios.post('/create-exb', data);
+            setRedirect(true);
+        }
+        
     }
 
     if(redirect) {
@@ -26,7 +50,7 @@ export default function CreateFormPage(){
     return(
         <div>
             <AccountNav />
-                <form onSubmit={createNewExhibition}>
+                <form onSubmit={saveExhibition}>
                     <div className="text-left">
                     <h2 className="text-2xl mt-4">Title</h2>
                     <input type='text' value={title} onChange={ev => setTitle(ev.target.value)} placeholder='Title , Example: My New Exhibition' />

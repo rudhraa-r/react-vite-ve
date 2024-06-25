@@ -8,6 +8,7 @@ import AccountNav from "./AccountNavPage";
 
 
 export default function ProfilePage () {
+    const [redirect, setRedirect] = useState(null);
     const {ready,user,setUser} = useContext(UserContext);
 
     let {subpage}= useParams();
@@ -16,9 +17,10 @@ export default function ProfilePage () {
     }
 
      function logout() {
-         axios.post('/logout');
-        setRedirect('/');
+        axios.post('/logout');
         setUser(null);
+        setRedirect(false);
+        
         
     }
 
@@ -27,7 +29,7 @@ export default function ProfilePage () {
     }
 
     if(ready && !user && !redirect) {
-        return<Navigate to={'/login'} />
+        return<Navigate to={'/login'} /> 
     }
 
 

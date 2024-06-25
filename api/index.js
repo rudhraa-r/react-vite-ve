@@ -135,6 +135,29 @@ app.get('/create', (req, res) =>{
 
 });
 
+app.get('/create/:id' , async (req, res) =>{
+    const {id} = req.params;
+    res.json(await CreateExb.findById(id));
+})
+
+app.put('/create-exb', async(req, res) =>{
+    const {token} = req.cookies;
+    const { id, title, description, datefrom, dateto} = req.body;
+    const exbDoc = await CreateExb.findById(id);
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if(userData.id === exbDoc.owner.toString()){
+            exbDoc.set({
+                title, description, datefrom, dateto,
+            });
+            await exbDoc.save();
+            res.json('ok');   
+        } 
+
+    })
+
+})
+
+
  
 app.post('/upload-by-link', async (req, res) =>{
     const {link} = req.body;
@@ -182,5 +205,28 @@ app.get('/stall', (req, res) =>{
     }) 
 
 });
+
+app.get('/create/:exbTitle/:stallId' , async (req, res) =>{
+    const {stallId} = req.params;
+    res.json(await CreateStall.findById(stallId));
+})
+
+app.put('/stall', async(req, res) =>{
+    const {token} = req.cookies;
+    const { stallId, name, photos} = req.body;
+    const StallDoc = await CreateStall.findById(stallId);
+    console.log(StallDoc)
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if(userData.id === StallDoc.owner.toString()){
+            StallDoc.set({
+                name, photos
+            });
+            await StallDoc.save();
+            res.json('ok');   
+        } 
+
+    })
+
+})
 
 app.listen(4000);
