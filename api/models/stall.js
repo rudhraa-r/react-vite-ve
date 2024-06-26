@@ -1,11 +1,12 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const stallSchema = new mongoose.Schema({
     owner:{type:mongoose.Schema.Types.ObjectId , ref:'User'},
     name: String,
-    photos: [String],
+    photos:[String],
+    exhibition: [String],
 });
 
 const StallModel = mongoose.model('Stall', stallSchema);
 
-module.exports = StallModel ;
+module.exports = StallModel ;         

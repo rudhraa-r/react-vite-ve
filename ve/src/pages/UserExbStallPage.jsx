@@ -24,6 +24,7 @@ export default function NewStallPage(){
     async function uploadPhoto(ev) {
         const files = ev.target.files;
         const data = new FormData();
+
         for (let i = 0; i < files.length; i++) {
             data.append('photos', files[i]);    
         }
@@ -36,9 +37,16 @@ export default function NewStallPage(){
             });
         })
     }
-    const {exbTitle , stallId} = useParams();
-    
+    console.log(addedPhotos);
 
+    const {exbTitle , stallId} = useParams();
+    const location = useLocation();
+    console.log(location);
+    const { exb } = location.state || {};
+    
+    
+    console.log(stallId);
+    console.log(exb._id);
     useEffect(() => {
         if(!stallId){
           return
@@ -46,24 +54,24 @@ export default function NewStallPage(){
         axios.get(`/create/${exbTitle}/`+stallId).then(response =>{
           const {data} = response;
           setName(data.name);
-          setAddedPhotos(data.addedPhotos);
+          setAddedPhotos(data.photos);
         })
-      }, [stallId])
-
+      }, [stallId,exbTitle]) 
+   
     async function addNewStall(ev) {
         ev.preventDefault();
-        const data = {name , addedPhotos};
+        const data = {name , addedPhotos,exhibitionId: exb._id};
         if(stallId){
             await axios.put('/stall', { stallId, ...data });
             setRedirect(true);
         }else{
-            await axios.post('/stall', {name , addedPhotos});
+            await axios.post('/stall', {name , addedPhotos,exhibitionId: exb._id});
             setRedirect(true);
         }
     }
     
     if(redirect) {
-        return <Navigate to={`/account/create/new/${exbTitle}`} state={{ exb: { title: exbTitle }} } />
+        return <Navigate to={`/account/create/new/${exb._id}`} state={{exb}} />
     }
 
     return (

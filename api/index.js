@@ -139,7 +139,7 @@ app.get('/create/:id' , async (req, res) =>{
     const {id} = req.params;
     res.json(await CreateExb.findById(id));
 })
-
+  
 app.put('/create-exb', async(req, res) =>{
     const {token} = req.cookies;
     const { id, title, description, datefrom, dateto} = req.body;
@@ -185,48 +185,54 @@ app.post('/upload', photosMiddleware.array('photos', 100) ,(req, res) =>{
 
 app.post('/stall', (req, res)=>{
     const {token} = req.cookies;
-    const {name ,photos} = req.body;
+    const {name,addedPhotos,exhibitionId, } = req.body;
+
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if (err) throw err ;
             const createStallDoc = await CreateStall.create({
-                owner: userData.id,
-                name, photos
+                owner:userData.id,
+                name, 
+                photos: addedPhotos,
+                exhibition: exhibitionId,
             });
             res.json(createStallDoc);
         })  
     
 })
-
-app.get('/stall', (req, res) =>{
+   
+app.get('/stall/:exhibitionId', (req, res) =>{
     const {token} = req.cookies;
+    const { exhibitionId } = req.params;
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         const {id} = userData ;
-        res.json(await CreateStall.find({owner:id}) )
+        res.json(await CreateStall.find({owner:id, exhibition: exhibitionId}) )
     }) 
 
-});
+});     
 
 app.get('/create/:exbTitle/:stallId' , async (req, res) =>{
     const {stallId} = req.params;
-    res.json(await CreateStall.findById(stallId));
-})
+    res.json(await CreateStall.findById(stallId));  
+})   
 
 app.put('/stall', async(req, res) =>{
-    const {token} = req.cookies;
-    const { stallId, name, photos} = req.body;
+    const {token} = req.cookies; 
+    const { stallId, name, addedPhotos,exhibitionId} = req.body;
     const StallDoc = await CreateStall.findById(stallId);
     console.log(StallDoc)
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if(userData.id === StallDoc.owner.toString()){
             StallDoc.set({
-                name, photos
+                name, 
+                photos:addedPhotos,
+                exhibition: exhibitionId,
             });
             await StallDoc.save();
-            res.json('ok');   
+            res.json('ok');            
         } 
 
     })
 
 })
-
-app.listen(4000);
+   
+app.listen(4000);    
