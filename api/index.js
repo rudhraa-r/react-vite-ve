@@ -219,7 +219,6 @@ app.put('/stall', async(req, res) =>{
     const {token} = req.cookies; 
     const { stallId, name, addedPhotos,exhibitionId} = req.body;
     const StallDoc = await CreateStall.findById(stallId);
-    console.log(StallDoc)
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if(userData.id === StallDoc.owner.toString()){
             StallDoc.set({
@@ -227,7 +226,7 @@ app.put('/stall', async(req, res) =>{
                 photos:addedPhotos,
                 exhibition: exhibitionId,
             });
-            await StallDoc.save();
+            await StallDoc.save();       
             res.json('ok');            
         } 
 

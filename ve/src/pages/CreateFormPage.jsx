@@ -50,8 +50,8 @@ export default function CreateFormPage(){
     return(
         <div>
             <AccountNav />
-                <form onSubmit={saveExhibition}>
-                    <div className="text-left">
+                <form onSubmit={saveExhibition} className="  flex flex-col">
+                    <div className="flex-none">
                     <h2 className="text-2xl mt-4">Title</h2>
                     <input type='text' value={title} onChange={ev => setTitle(ev.target.value)} placeholder='Title , Example: My New Exhibition' />
 
@@ -74,7 +74,7 @@ export default function CreateFormPage(){
                             </div>
                         </div>
                     </div>
-                    <button className=" p-2 text-white rounded-2xl bg-teal-800 my-4 w-3/4 items-center ">Create</button>
+                    <button className=" p-2 text-white rounded-2xl bg-teal-800 my-4 w-full   ">Create / Save</button>
                 </form>
             </div>
     );
