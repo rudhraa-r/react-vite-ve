@@ -229,7 +229,7 @@ app.put('/stall', async(req, res) =>{
             await StallDoc.save();       
             res.json('ok');            
         } 
-         
+            
     })
 
 })

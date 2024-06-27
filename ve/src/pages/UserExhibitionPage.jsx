@@ -54,7 +54,7 @@ export default function UserExbPage(){
                                 {stall.photos.length > 0 && (
                                     <img src={'http://localhost:4000/uploads/'+stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl"/>
                                 )}
-                            </div>
+                            </div> 
                             <div className="bg-teal-800 text-white rounded-xl">
                                 <h2 className="text-xl text-center  mt-3">{stall.name}</h2>
             
