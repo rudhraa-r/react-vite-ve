@@ -25,7 +25,7 @@ export default function UserExbPage(){
     }, [exb])
 
     return(
-        <div >
+        <div className=" items-center justify-center">
             <div className="bg-gray-300 text-center mt-7 text-2xl p-3.5 rounded-lg flex justify-between items-center">
                 <Link to={'/account/create'} className=" ">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-7">
@@ -45,12 +45,20 @@ export default function UserExbPage(){
                 </Link> 
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 items-center  gap-2 grid grid-cols-3  md:grid-cols-4 lg:grid-cols-5 ">
                 {createStall.length > 0 && createStall.map(stall =>(
-                    <div className="">
-                        <Link to={`/account/create/${exb.title}/${stall._id}`} state={{exb}} className="">
-                        <div className=" bg-gray-200 p-4 rounded-2xl my-4 border border-teal-700">
-                        {stall.name}
+                    <div className=" mx-4 flex justify-center ">
+                        <Link to={`/account/create/${exb.title}/${stall._id}`} state={{exb}} className="w-full">
+                        <div className=" bg-gray-100  flex-col p-4 rounded-2xl my-4  border border-teal-700">
+                            <div className="flex h-32 rounded-xl bg-gray-300 ">
+                                {stall.photos.length > 0 && (
+                                    <img src={'http://localhost:4000/uploads/'+stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl"/>
+                                )}
+                            </div>
+                            <div className="bg-teal-800 text-white rounded-xl">
+                                <h2 className="text-xl text-center  mt-3">{stall.name}</h2>
+            
+                            </div>
                         </div>
                         </Link>
                     </div>
