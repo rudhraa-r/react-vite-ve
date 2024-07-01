@@ -16,7 +16,7 @@ export default function UserExbPage(){
     const [createStall , setCreateStall ] = useState([]);
       useEffect(() =>{
         if(exb && exb._id){
-          axios.get('/stall/'+exb._id).then(({data})=>{
+          axios.get('/stalls/'+exb._id).then(({data})=>{
               setCreateStall(data);
           })
         }else {
@@ -26,7 +26,7 @@ export default function UserExbPage(){
 
     return(
         <div className=" items-center justify-center">
-            <div className="bg-gray-300 text-center mt-7 text-2xl p-3.5 rounded-lg flex justify-between items-center">
+            <div className="bg-gray-200 text-center shadow-lg mt-7 text-2xl p-3.5 rounded-lg flex justify-between items-center">
                 <Link to={'/account/create'} className=" ">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-7">
                         <path fillRule="evenodd" d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z" clipRule="evenodd" />
@@ -34,10 +34,10 @@ export default function UserExbPage(){
                 </Link>
                 <div className=" ">{exb.title}</div>
                 <div></div>
-                </div>
+            </div>
             <p className="text-gray-600 mt-2">Description : {exb.description}</p>
             <div className=" text-center mt-4">
-                <Link className="inline-flex gap-1 bg-teal-900 text-white py-2 px-6 rounded-full" to={`/account/create/new/${exb.title}/stall`} state={{exb}}>
+                <Link className="inline-flex shadow-lg gap-1 bg-teal-900 text-white py-2 px-6 rounded-full" to={`/account/create/new/${exb.title}/stall`} state={{exb}}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
@@ -49,7 +49,7 @@ export default function UserExbPage(){
                 {createStall.length > 0 && createStall.map(stall =>(
                     <div className=" mx-4 flex justify-center ">
                         <Link to={`/account/create/${exb.title}/${stall._id}`} state={{exb}} className="w-full">
-                        <div className=" bg-gray-100  flex-col p-4 rounded-2xl my-4  border border-teal-700">
+                        <div className=" bg-gray-100  flex-col p-4  shadow-md  rounded-2xl my-4  border ">
                             <div className="flex h-32 rounded-xl bg-gray-300 ">
                                 {stall.photos.length > 0 && (
                                     <img src={'http://localhost:4000/uploads/'+stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl"/>

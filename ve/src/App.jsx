@@ -12,6 +12,8 @@ import CreatePage from './pages/CreateExPage.jsx';
 import CreateFormPage from './pages/CreateFormPage.jsx';
 import UserExhibitionPage from './pages/UserExhibitionPage.jsx';
 import UserExbStallPage from './pages/UserExbStallPage.jsx';
+import ExhibtionPage from './pages/ExhibitionPage.jsx';
+import Exhibtion from './pages/Exhibition.jsx';
 
 axios.defaults.baseURL = 'http://localhost:4000' 
 axios.defaults.withCredentials= true ;
@@ -32,8 +34,8 @@ function App() {
         <Route path="/account/create/:id" element={<CreateFormPage />} />
         <Route path="/account/create/new/:exbTitle/:stall" element={<UserExbStallPage />} />
         <Route path="/account/create/:exbTitle/:stallId" element={<UserExbStallPage />} />
-
-
+        <Route path="/exhibition/:exbId" element={<ExhibtionPage />} />
+        <Route path="/exhibitions/:exbTitle" element={<Exhibtion />} />
 
 
       </Route>

@@ -8,11 +8,11 @@ export default function AccountNav() {
     }
 
     function linkClasses (type =null){
-        let classes = 'inline-flex gap-1 py-2 px-6 rounded-full';
+        let classes = 'inline-flex gap-1 py-2 px-6 rounded-full shadow-lg';
         if(type === subpage){
-            classes+= ' bg-teal-900 text-white '
+            classes+= ' bg-teal-900 text-white shadow-lg'
         } else{
-            classes += ' bg-gray-200'
+            classes += ' bg-gray-200 shadow-lg'
         }
         return classes ;
     }

@@ -113,17 +113,17 @@ app.post('/logout' , (req, res) =>{
 
 app.post('/create-exb', (req, res)=>{
     const {token} = req.cookies;
-    const {title , description , datefrom , dateto} = req.body;
+    const {title , description ,coverphoto, datefrom , dateto} = req.body;
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if (err) throw err ;
             
             const createDoc = await CreateExb.create({
                 owner: userData.id,
-                title, description , datefrom , dateto
+                title, description ,coverphoto, datefrom , dateto
             });
             res.json(createDoc);
         })  
-    
+       
 })
 
 app.get('/create', (req, res) =>{
@@ -142,14 +142,14 @@ app.get('/create/:id' , async (req, res) =>{
   
 app.put('/create-exb', async(req, res) =>{
     const {token} = req.cookies;
-    const { id, title, description, datefrom, dateto} = req.body;
+    const { id, title, description,coverphoto, datefrom, dateto} = req.body;
     const exbDoc = await CreateExb.findById(id);
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if(userData.id === exbDoc.owner.toString()){
             exbDoc.set({
-                title, description, datefrom, dateto,
+                title, description,coverphoto, datefrom, dateto,
             });
-            await exbDoc.save();
+            await exbDoc.save();    
             res.json('ok');   
         } 
 
@@ -157,6 +157,11 @@ app.put('/create-exb', async(req, res) =>{
 
 })
 
+app.get('/exhibition/:id', async(req, res) =>{
+    const {id} = req.params;
+    res.json(await CreateExb.findById(id));
+})
+     
 
  
 app.post('/upload-by-link', async (req, res) =>{
@@ -181,7 +186,17 @@ app.post('/upload', photosMiddleware.array('photos', 100) ,(req, res) =>{
         uploadedFiles.push(newPath.replace('uploads\\', ''))
     }
     res.json(uploadedFiles);
-})
+}) 
+
+app.post('/uploadcover', photosMiddleware.single('coverphoto') ,(req, res) =>{
+    const {path, originalname} = req.file;
+        const parts = originalname.split('.')
+        const ext = parts[parts.length - 1];
+        const newPath = path + '.' + ext ;
+        fs.renameSync(path, newPath);
+        const uploadedFile = newPath.replace('uploads\\', '')
+    res.json(uploadedFile);
+})   
 
 app.post('/stall', (req, res)=>{
     const {token} = req.cookies;
@@ -208,7 +223,16 @@ app.get('/stall/:exhibitionId', (req, res) =>{
         res.json(await CreateStall.find({owner:id, exhibition: exhibitionId}) )
     }) 
 
-});     
+});    
+
+app.get('/stalls/:exhibitionId', async (req, res) =>{
+    const { exhibitionId } = req.params;
+        res.json(await CreateStall.find({exhibition: exhibitionId}) )
+});    
+
+app.get('/exb/stalls', async (req, res) =>{
+    res.json(await CreateStall.find());
+}) 
 
 app.get('/create/:exbTitle/:stallId' , async (req, res) =>{
     const {stallId} = req.params;
@@ -233,5 +257,10 @@ app.put('/stall', async(req, res) =>{
     })
 
 })
+
+app.get('/exhibitions' , async (req, res) =>{
+    const exbs = await CreateExb.find();
+    res.json(exbs);  
+})
    
-app.listen(4000);    
+app.listen(4000);      
