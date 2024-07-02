@@ -83,14 +83,14 @@ app.get('/profile' , (req, res) =>{
                 if (!userDoc) {
                     return res.status(404).json({ error: "User not found" });
                 }
-
+  
                 const { name, email, _id } = userDoc;
                 res.json({ name, email, _id });
             } catch (error) {
                 console.error("Database error:", error); // Debug log
                 res.status(500).json({ error: "Internal server error" });
-            }
-        });
+            }     
+        });        
     } else {
         res.json(null);
         
@@ -121,10 +121,10 @@ app.post('/create-exb', (req, res)=>{
                 owner: userData.id,
                 title, description ,coverphoto, datefrom , dateto
             });
-            res.json(createDoc);
+            res.json(createDoc);  
         })  
-       
-})
+           
+})     
 
 app.get('/create', (req, res) =>{
     const {token} = req.cookies;

@@ -129,7 +129,7 @@ export default function NewStallPage(){
                         Upload
                     </label>
                 </div>
-                <button on className=" p-2 text-white  rounded-2xl bg-teal-800 my-4 w-3/4 items-center ">Add Stall</button>
+                <button on className=" p-2 text-white  rounded-2xl bg-teal-800 my-4 w-3/4 items-center ">Add / Save </button>
             </form>
         </div>
     )

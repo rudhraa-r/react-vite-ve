@@ -42,17 +42,17 @@ export default function UserExbPage(){
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
                 Add New Stall
-                </Link> 
+                </Link>  
             </div>
 
-            <div className="mt-4 items-center  gap-2 grid grid-cols-3  md:grid-cols-4 lg:grid-cols-5 ">
+            <div className="mt-4 items-center w-auto gap-2 sm:gap-1 grid grid-cols-2  md:grid-cols-4 lg:grid-cols-5 ">
                 {createStall.length > 0 && createStall.map(stall =>(
-                    <div className=" mx-4 flex justify-center ">
-                        <Link to={`/account/create/${exb.title}/${stall._id}`} state={{exb}} className="w-full">
+                    <div className=" mx-4 sm:mx-3 flex justify-center ">
+                        <Link to={`/account/create/${exb.title}/${stall._id}`} state={{exb}} className="sm:w-auto w-full">
                         <div className=" bg-gray-100  flex-col p-4  shadow-md  rounded-2xl my-4  border ">
-                            <div className="flex h-32 rounded-xl bg-gray-300 ">
+                            <div className="flex h-auto rounded-xl bg-gray-300 ">
                                 {stall.photos.length > 0 && (
-                                    <img src={'http://localhost:4000/uploads/'+stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl"/>
+                                    <img src={'http://localhost:4000/uploads/'+stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl w-auto aspect-square"/>
                                 )}
                             </div> 
                             <div className="bg-teal-800 text-white rounded-xl">
