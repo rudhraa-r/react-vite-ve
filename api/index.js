@@ -135,11 +135,18 @@ app.get('/create', (req, res) =>{
 
 });
 
+app.get('/exhibitions/:id', async(req, res) =>{
+        const {id} = req.params ;
+        res.json(await CreateExb.find({owner:id}) )
+
+});
+
 app.get('/create/:id' , async (req, res) =>{
     const {id} = req.params;
     res.json(await CreateExb.findById(id));
 })
-  
+
+
 app.put('/create-exb', async(req, res) =>{
     const {token} = req.cookies;
     const { id, title, description,coverphoto, datefrom, dateto} = req.body;
@@ -157,12 +164,11 @@ app.put('/create-exb', async(req, res) =>{
 
 })
 
-app.get('/exhibition/:id', async(req, res) =>{
-    const {id} = req.params;
-    res.json(await CreateExb.findById(id));
-})
-     
-
+  
+app.get('/stall/:stallId' , async (req, res) =>{
+    const {stallId} = req.params;
+    res.json(await CreateStall.findById(stallId));  
+}) ;  
  
 app.post('/upload-by-link', async (req, res) =>{
     const {link} = req.body;
@@ -237,7 +243,10 @@ app.get('/exb/stalls', async (req, res) =>{
 app.get('/create/:exbTitle/:stallId' , async (req, res) =>{
     const {stallId} = req.params;
     res.json(await CreateStall.findById(stallId));  
-})   
+}) 
+
+ 
+
 
 app.put('/stall', async(req, res) =>{
     const {token} = req.cookies; 
@@ -262,5 +271,10 @@ app.get('/exhibitions' , async (req, res) =>{
     const exbs = await CreateExb.find();
     res.json(exbs);  
 })
+app.get('/exhibition/:id', async(req, res) =>{
+    const {id} = req.params;
+    res.json(await CreateExb.findById(id));
+})
+               
    
 app.listen(4000);      

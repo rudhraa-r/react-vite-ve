@@ -1,14 +1,18 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import React from 'react';
 import { format } from 'date-fns';
 import { Link } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
-export default function IndexPage () {
+export default function VisitPage () {
+
+    const {user} = useContext(UserContext);
+    console.log(user);
+
     const [exhibitions , SetExhibitions] = useState([]);
-    const [stalls , setStalls] = useState([])
     useEffect(() =>{
-        axios.get('/exhibitions').then(response =>{
+        axios.get('/exhibitions/'+user._id).then(response =>{
             SetExhibitions(response.data);
         });
     }, []);
@@ -23,9 +27,8 @@ export default function IndexPage () {
 
     return( 
         <div>
-        <div className="bg-gray-100  shadow-lg m-7 text-2xl p-3.5 rounded-lg  text-center">Virtual Exhibitions</div>
-        <p className="text-gray-500 text-lg m-7">Scroll down or search for exploring your desired exhibition</p>
-    <div className=" mt-7 gap-x-11 gap-y-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4" >
+            <div className="bg-gray-100  shadow-lg m-7 text-2xl p-3.5 rounded-lg  text-center">Preview of all your exhibitions</div>
+    <div className=" mt-10 gap-x-11 gap-y-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4" >
         {exhibitions.length > 0 && exhibitions.map(exb =>(
             <Link className="bg-gray-100 rounded-2xl  mt-5 shadow-lg p-4" to={'/exhibition/'+exb._id}  key={exb._id} state={{exb}}>
                 {exb.coverphoto ? (

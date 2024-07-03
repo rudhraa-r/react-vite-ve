@@ -24,7 +24,7 @@ export default function Exhibition () {
     }, [exbId])
 
     return(
-        <div>hi
+        <div>
             <div className="mt-4 rounded-2xl shadow-lg bg-gray-200 items-center w-auto self-center gap-3 sm:gap-1 grid grid-cols-2  md:grid-cols-4 lg:grid-cols-5 ">
                 {stalls.length? (stalls.map(stall =>(
                     <div className=" mx-4 sm:mx-3 flex justify-center ">
