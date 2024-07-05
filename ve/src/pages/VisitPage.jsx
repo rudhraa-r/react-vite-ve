@@ -41,7 +41,7 @@ export default function VisitPage () {
                 <h2 className="text-xl font-semibold"> {exb.title}</h2>
                 <h3 className="text-sm text-gray-800 ">{exb.description}</h3>
                 <div className="text-sm mt-1 text-gray-600">
-                <DateFormatter datefrom={exb.datefrom} dateto={exb.dateto}   />
+                <DateFormatter datefrom={exb.datefrom} dateto={exb.dateto}    />
                 </div>
             </Link>
             ) 
