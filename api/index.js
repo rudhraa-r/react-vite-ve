@@ -104,12 +104,12 @@ app.get('/profile' , (req, res) =>{
     } else {
         res.json(null);
     }
-    */
+    */   
 })
 
 app.post('/logout' , (req, res) =>{
-    res.cookie('token', '').json(true);
-})
+    res.cookie('token', '').json(true);       
+})              
 
 app.post('/create-exb', (req, res)=>{
     const {token} = req.cookies;
@@ -275,6 +275,17 @@ app.get('/exhibition/:id', async(req, res) =>{
     const {id} = req.params;
     res.json(await CreateExb.findById(id));
 })
-               
+
+app.delete('/stalls/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await CreateStall.findByIdAndDelete(id);
+        res.status(200).send({ message: 'Stall deleted successfully' });
+    } catch (error) {
+        res.status(500).send({ error: 'Failed to delete stall' });
+    }
+});     
+
+                
    
 app.listen(4000);      
