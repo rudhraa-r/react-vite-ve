@@ -1,0 +1,9 @@
+{
+    "buildCommand": "cd ve && npm install && ./node_modules/vite/bin/vite.js build",
+    "outputDirectory": "ve/dist",
+    "framework": "vite",
+    "rewrites": [{
+        "source": "/api/(.*)",
+        "destination":"/api/index.js"
+    }]
+}

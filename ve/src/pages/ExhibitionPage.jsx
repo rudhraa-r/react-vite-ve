@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link,  useParams } from "react-router-dom"
+import Image from "../Image";
 
 export default function ExhibtionPage () {
     const {exbId} = useParams();
@@ -34,7 +35,7 @@ export default function ExhibtionPage () {
             </div>
             <div className="flex">
                 <div className=" flex-col mx-5  items-center justify-center ">
-                    <img className="object-cover rounded-2xl h-auto w-full sm:w-96 aspect-square" src={"http://localhost:4000/uploads/"+exhibition.coverphoto} alt="" />
+                    <Image className="object-cover rounded-2xl h-auto w-full sm:w-96 aspect-square" src={exhibition.coverphoto} alt="" />
                     <p className="text-center lg:self-center italic">Cover Photo</p>
                 </div>
                 <div className=" flex flex-col w-1/2 p-2 mx-7">

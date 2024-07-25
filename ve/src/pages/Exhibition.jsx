@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import Image from "../Image";
 
 
 export default function Exhibition () {
@@ -32,7 +33,7 @@ export default function Exhibition () {
                         <div className=" bg-gray-100  flex-col p-4  shadow-md  rounded-2xl my-4  border ">
                             <div className="flex h-auto rounded-xl bg-gray-300 ">
                                 {stall.photos.length > 0 && (
-                                    <img src={'http://localhost:4000/uploads/'+stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl w-auto aspect-square"/>
+                                    <Image src={stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl w-auto aspect-square"/>
                                 )}
                             </div> 
                             <div className="bg-teal-800 text-white rounded-xl">

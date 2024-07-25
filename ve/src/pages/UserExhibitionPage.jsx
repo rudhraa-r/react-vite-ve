@@ -1,6 +1,7 @@
 import { Link, useLocation, useParams } from "react-router-dom"
 import {useEffect, useState } from "react";
 import axios from 'axios';
+import Image from "../Image";
 
 
 export default function UserExbPage(){
@@ -65,7 +66,7 @@ export default function UserExbPage(){
                         
                             <div className="flex h-auto rounded-xl bg-gray-300 ">
                                 {stall.photos.length > 0 && (
-                                    <img src={'http://localhost:4000/uploads/'+stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl w-auto aspect-square"/>
+                                    <Image src={stall.photos[0]} alt="" className="object-cover grow shrink-0 rounded-xl w-auto aspect-square"/>
                                 )}
                                 <button onClick={(e) => { e.preventDefault(); removeStall(stall._id); }} className=" self-start relative -top-3.5 right-2.5 cursor-pointer text-black   bg-opacity-50 rounded-2xl py-0 px-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 ">
