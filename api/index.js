@@ -54,12 +54,12 @@ async function uploadtoS3(path , originalFilename, mimetype){
     return `https://${bucket}.s3.amazonaws.com/${newFilename}`;
 }
   
-app.get('/test', (req, res) =>{
+app.get('/api/test', (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     res.json('test ok');
 })   
 
-app.post('/register', async(req, res) =>{
+app.post('/api/register', async(req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {name , email , password} = req.body;
     try {
@@ -76,7 +76,7 @@ app.post('/register', async(req, res) =>{
     
 })
 
-app.post('/login', async(req, res) =>{
+app.post('/api/login', async(req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {email , password} = req.body;
    const userDoc= await User.findOne({email}) 
@@ -96,7 +96,7 @@ app.post('/login', async(req, res) =>{
    }
 })
 
-app.get('/profile' , (req, res) =>{
+app.get('/api/profile' , (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
     
@@ -136,11 +136,11 @@ app.get('/profile' , (req, res) =>{
     */   
 })
 
-app.post('/logout' , (req, res) =>{
+app.post('/api/logout' , (req, res) =>{
     res.cookie('token', '').json(true);       
 })              
 
-app.post('/create-exb', (req, res)=>{
+app.post('/api/create-exb', (req, res)=>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
     const {title , description ,coverphoto, datefrom , dateto} = req.body;
@@ -156,7 +156,7 @@ app.post('/create-exb', (req, res)=>{
            
 })     
 
-app.get('/create', (req, res) =>{
+app.get('/api/create', (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -166,21 +166,21 @@ app.get('/create', (req, res) =>{
 
 });
 
-app.get('/exhibitions/:id', async(req, res) =>{
+app.get('/api/exhibitions/:id', async(req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
         const {id} = req.params ;
         res.json(await CreateExb.find({owner:id}) )
 
 });
 
-app.get('/create/:id' , async (req, res) =>{
+app.get('/api/create/:id' , async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {id} = req.params;
     res.json(await CreateExb.findById(id));
 })
 
 
-app.put('/create-exb', async(req, res) =>{
+app.put('/api/create-exb', async(req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
     const { id, title, description,coverphoto, datefrom, dateto} = req.body;
@@ -199,13 +199,13 @@ app.put('/create-exb', async(req, res) =>{
 })
 
   
-app.get('/stall/:stallId' , async (req, res) =>{
+app.get('/api/stall/:stallId' , async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {stallId} = req.params;
     res.json(await CreateStall.findById(stallId));  
 }) ;  
  
-app.post('/upload-by-link', async (req, res) =>{
+app.post('/api/upload-by-link', async (req, res) =>{
     const {link} = req.body;
     const newName = 'photo'+ Date.now() + '.jpg';
     await imageDownloader.image({
@@ -217,7 +217,7 @@ app.post('/upload-by-link', async (req, res) =>{
 } )
 
 const photosMiddleware = multer({dest:'/tmp'});
-app.post('/upload', photosMiddleware.array('photos', 100) ,async (req, res) =>{
+app.post('/api/upload', photosMiddleware.array('photos', 100) ,async (req, res) =>{
     const uploadedFiles = [];
     for(let i=0 ; i<req.files.length ; i++) {
         const {path, originalname, mimetype} = req.files[i];
@@ -227,13 +227,13 @@ app.post('/upload', photosMiddleware.array('photos', 100) ,async (req, res) =>{
     res.json(uploadedFiles); 
 }) 
 
-app.post('/uploadcover', photosMiddleware.single('coverphoto') ,async (req, res) =>{
+app.post('/api/uploadcover', photosMiddleware.single('coverphoto') ,async (req, res) =>{
     const {path, originalname, mimetype} = req.file;
     const uploadedFile= await uploadtoS3(path , originalname, mimetype);
     res.json(uploadedFile);
 })   
 
-app.post('/stall', (req, res)=>{
+app.post('/api/stall', (req, res)=>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
     const {name,addedPhotos,exhibitionId, } = req.body;
@@ -251,7 +251,7 @@ app.post('/stall', (req, res)=>{
     
 })
    
-app.get('/stall/:exhibitionId', (req, res) =>{
+app.get('/api/stall/:exhibitionId', (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
     const { exhibitionId } = req.params;
@@ -262,18 +262,18 @@ app.get('/stall/:exhibitionId', (req, res) =>{
 
 });    
 
-app.get('/stalls/:exhibitionId', async (req, res) =>{
+app.get('/api/stalls/:exhibitionId', async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const { exhibitionId } = req.params;
         res.json(await CreateStall.find({exhibition: exhibitionId}) )
 });    
 
-app.get('/exb/stalls', async (req, res) =>{
+app.get('/api/exb/stalls', async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     res.json(await CreateStall.find());
 }) 
 
-app.get('/create/:exbTitle/:stallId' , async (req, res) =>{
+app.get('/api/create/:exbTitle/:stallId' , async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {stallId} = req.params;
     res.json(await CreateStall.findById(stallId));  
@@ -282,7 +282,7 @@ app.get('/create/:exbTitle/:stallId' , async (req, res) =>{
  
 
 
-app.put('/stall', async(req, res) =>{
+app.put('/api/stall', async(req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies; 
     const { stallId, name, addedPhotos,exhibitionId} = req.body;
@@ -302,17 +302,17 @@ app.put('/stall', async(req, res) =>{
 
 })
 
-app.get('/exhibitions' , async (req, res) =>{
+app.get('/api/exhibitions' , async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const exbs = await CreateExb.find();
     res.json(exbs);  
 })
-app.get('/exhibition/:id', async(req, res) =>{
+app.get('/api/exhibition/:id', async(req, res) =>{
     const {id} = req.params;
     res.json(await CreateExb.findById(id));
 })
 
-app.delete('/stalls/:id', async (req, res) => {
+app.delete('/api/stalls/:id', async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
     try {
         const { id } = req.params;
