@@ -4,6 +4,7 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
+import Image from "../Image";
 
 export default function VisitPage () {
 
@@ -33,7 +34,7 @@ export default function VisitPage () {
             <Link className="bg-gray-100 rounded-2xl  mt-5 shadow-lg p-4" to={'/exhibition/'+exb._id}  key={exb._id} state={{exb}}>
                 {exb.coverphoto ? (
                         <div className="bg-gray-500 rounded-2xl mb-2">
-                            <img src={'http://localhost:4000/uploads/'+exb.coverphoto} alt="" className="rounded-2xl object-cover aspect-square" />
+                            <Image src={exb.coverphoto} alt="" className="rounded-2xl object-cover aspect-square" />
                         </div>  
                         ) : (
                             <div className="bg-gray-300 rounded-2xl mb-2 aspect-square  flex items-center justify-evenly italic"><p>Cover Photo</p></div>

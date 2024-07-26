@@ -14,9 +14,13 @@ const fs = require('fs');
 const mime = require('mime-types');
 
 
+    
 require('dotenv').config()
 const app = express();
-
+app.use(cors({
+    credentials: true,
+    origin:process.env.FRONTEND_URL,
+}));
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'skdgnoerig';
 const bucket = 'virtual-exhibition-app';
@@ -24,10 +28,7 @@ const bucket = 'virtual-exhibition-app';
 app.use(express.json());
 app.use(cookieParser()) ;
 app.use('/uploads', express.static(__dirname + '/uploads'));
-app.use(cors({
-    credentials: true,
-    origin:process.env.FRONTEND_URL,
-}));
+
 
 
 

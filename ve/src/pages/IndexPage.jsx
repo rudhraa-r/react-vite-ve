@@ -1,18 +1,32 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import React from 'react';
 import { format } from 'date-fns';
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Image from "../Image";
+import { UserContext } from "../UserContext";
 
 export default function IndexPage () {
+    const { user } = useContext(UserContext);
     const [exhibitions , SetExhibitions] = useState([]);
-    const [stalls , setStalls] = useState([])
+    const [stalls , setStalls] = useState([]);
+    const [loading, setLoading] = useState(true);
     useEffect(() =>{
-        axios.get('/exhibitions').then(response =>{
-            SetExhibitions(response.data);
-        });
-    }, []);
+        if (!user) {
+            setLoading(false); // Stop loading if no user
+            return; // Don't fetch exhibitions if not logged in
+        }
+
+        // Fetch exhibitions if user is authenticated
+        axios.get('/exhibitions')
+            .then(response => {
+                SetExhibitions(response.data);
+                setLoading(false); // Stop loading after data is fetched
+            })
+            .catch(() => {
+                setLoading(false); // Stop loading if there's an error
+            });
+    }, [user]);
 
     const DateFormatter = ({ datefrom, dateto }) => {
         const formattedDate = `${format(new Date(datefrom), 'MMMM dd')}-${format(new Date(dateto), 'MMM dd')}`;
@@ -20,7 +34,13 @@ export default function IndexPage () {
           <div className="">Live from: <span className=" text-xs font-bold">{formattedDate}</span></div>
         );
       };
+      if (loading) {
+        return <div>Loading...</div>; // Display loading state
+    }
 
+    if (!user) {
+        return <Navigate to='/login' />; // Redirect to login if user is not authenticated
+    }
 
     return( 
         <div>
