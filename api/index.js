@@ -26,7 +26,7 @@ app.use(cookieParser()) ;
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(cors({
     credentials: true,
-    origin:'https://react-vite-7uwhvkom3-rudhraas-projects.vercel.app/',
+    origin:'https://react-vite-ve-git-main-rudhraas-projects.vercel.app/',
 }));
 
 
