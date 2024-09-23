@@ -1,10 +1,12 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User.js');
 const CreateExb = require('./models/create-ex.js');
 const CreateStall = require('./models/stall.js');
+const CreateUpload = require('./models/upload-details.js');
 const jwt = require('jsonwebtoken');
 const imageDownloader = require('image-downloader');
 const cookieParser = require('cookie-parser');
@@ -12,7 +14,7 @@ const multer = require('multer');
 const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3')
 const fs = require('fs');
 const mime = require('mime-types');
-
+    
 
     
 require('dotenv').config()
@@ -156,6 +158,49 @@ app.post('/api/create-exb', (req, res)=>{
         })  
            
 })     
+app.post('/api/uploadDetails', (req, res)=>{
+    mongoose.connect(process.env.MONGO_URL);
+    const {token} = req.cookies;
+    const {name , description ,price , imgId, stallId} = req.body;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err ;
+            
+        const createUploadDoc = await CreateUpload.create({
+            owner:userData.id,
+            name, 
+            description,
+            price,
+            imgId,
+            stall: stallId,
+        });
+            res.json(createUploadDoc);  
+        })  
+           
+})
+
+app.put('/api/uploadDetails', async(req, res)=>{
+    mongoose.connect(process.env.MONGO_URL);
+    const {token} = req.cookies;
+    const {name , description ,price , imgId, stallId} = req.body;
+    const uploadDoc = await CreateUpload.findOne({imgId});
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err ;
+        if(userData.id === uploadDoc.owner.toString()){
+        uploadDoc.set({
+            owner:userData.id,
+            name, 
+            description,
+            price,
+            imgId,
+            stall: stallId,
+        });     
+            await uploadDoc.save();   
+            res.json('ok');
+    }  
+        })  
+    
+           
+})                   
 
 app.get('/api/create', (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
@@ -165,7 +210,7 @@ app.get('/api/create', (req, res) =>{
         res.json(await CreateExb.find({owner:id}) )
     })
 
-});
+});  
 
 app.get('/api/exhibitions/:id', async(req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
@@ -198,14 +243,19 @@ app.put('/api/create-exb', async(req, res) =>{
     })
 
 })
-
   
 app.get('/api/stall/:stallId' , async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {stallId} = req.params;
     res.json(await CreateStall.findById(stallId));  
-}) ;  
- 
+}) ; 
+
+app.get('/api/uploadDetails/:imgId' , async (req, res) =>{
+    mongoose.connect(process.env.MONGO_URL);
+    const {imgId} = req.params;
+    res.json(await CreateUpload.find({imgId}));  
+}) ; 
+  
 app.post('/api/upload-by-link', async (req, res) =>{
     const {link} = req.body;
     const newName = 'photo'+ Date.now() + '.jpg';
@@ -234,7 +284,7 @@ app.post('/api/uploadcover', photosMiddleware.single('coverphoto') ,async (req, 
     res.json(uploadedFile);
 })   
 
-app.post('/api/stall', (req, res)=>{
+app.post('/api/stall', async (req, res)=>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
     const {name,addedPhotos,exhibitionId, } = req.body;
@@ -251,7 +301,26 @@ app.post('/api/stall', (req, res)=>{
         })  
     
 })
-   
+
+/*app.post('/api/uploadDetails', async (req, res)=>{
+    mongoose.connect(process.env.MONGO_URL);
+    const {token} = req.cookies;
+    const {name,description,price, imgId } = req.body;
+
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err ;
+            const createUploadDoc = await CreateUpload.create({
+                owner:userData.id,
+                name, 
+                description,
+                price,
+                imgId,
+            });
+            res.json(createUploadDoc);
+        })  
+    
+})*/
+
 app.get('/api/stall/:exhibitionId', (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
@@ -302,7 +371,6 @@ app.put('/api/stall', async(req, res) =>{
     })
 
 })
-
 app.get('/api/exhibitions' , async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const exbs = await CreateExb.find();

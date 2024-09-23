@@ -5,7 +5,7 @@ import { Link, useParams, useLocation } from "react-router-dom"
 import Image from "../Image";
 
 
-export default function NewStallPage(){
+export default function StallDetailsPage(){
 
     const [name , setName] = useState('');
     const [addedPhotos , setAddedPhotos] = useState([]);
@@ -87,9 +87,8 @@ export default function NewStallPage(){
 
     const getImageName = (url) => {
         const parts = url.split('/');
-        const orname = parts[parts.length - 1];
-        const imagename = orname.split('.')
-        return imagename[0];
+        const imagename = parts[parts.length - 1];
+        return imagename;
     };
 
     return (
@@ -100,6 +99,7 @@ export default function NewStallPage(){
                 <input value={name} onChange={ev => setName(ev.target.value)} type="text" placeholder='Title , Example: My New Exhibition'/>
 
                 <h2 className="text-2xl mt-8">Photos :</h2>
+                <p className="text-gray-500 text-sm">Click on the top right corner icon to update details of your uploads </p>
                 <div className="flex gap-2">
                     <input type="text" value={photoLink} onChange={ev => setPhotoLink(ev.target.value)} placeholder={'Add using a link ....jpg'} />
                     <button onClick={addPhotoByLink} className="bg-gray-200 px-4 rounded-2xl">Add&nbsp;Photo</button>
@@ -107,7 +107,8 @@ export default function NewStallPage(){
                 
                 <div className=" mt-2 gap-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                     {addedPhotos.length > 0 && addedPhotos.map(link => (
-                        <div key={link} className="rounded-2xl h-32 flex relative">
+                        
+                        <div key={link} className="rounded-2xl h-32 flex  relative">
                             <Image src={link} alt="" className="rounded-2xl w-full object-cover" />
                             <button onClick={(e) => {e.preventDefault();removePhoto(link);}} className="cursor-pointer absolute bottom-1 right-1 text-white bg-black bg-opacity-50 rounded-2xl py-1 px-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -127,7 +128,15 @@ export default function NewStallPage(){
                                     </svg>
                                 )}
                             </button>
+                            <Link to={`/uploadDetails/${stallId}/${getImageName(link)}` }  state={{exb}}>
+                                <button className="cursor-pointer absolute top-1 right-1 text-white bg-black bg-opacity-50 rounded-2xl py-1 px-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                    </svg>
+                                </button>
+                            </Link>
                         </div>
+                        
                     )) }
                     <label className=" cursor-pointer flex items-center gap-1 justify-center border bg-transparent rounded-2xl p-8 text-2xl text-gray-600">
                         <input multiple type="file" className="hidden" onChange={uploadPhoto} />
@@ -137,7 +146,7 @@ export default function NewStallPage(){
                         Upload
                     </label>
                 </div>
-                <button on className=" p-2 text-white  rounded-2xl bg-teal-800 my-4 w-3/4 items-center ">Add / Save </button>
+                <button on className="mt-16 p-2 text-white  rounded-2xl bg-teal-800 my-4 w-3/4 items-center ">Add / Save </button>
             </form>
         </div>
     )
