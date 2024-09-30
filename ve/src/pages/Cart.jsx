@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {UserContext} from "../UserContext.jsx";
+import { Link } from "react-router-dom";
 
 export default function CartPage() {
     const [cartItems, setCartItems] = useState([]);
@@ -45,6 +46,9 @@ export default function CartPage() {
                     </div>
                 ))}
             </div>
+            <Link to={`/`}>
+            <button className="primary space-x-5 m-5 ">Buy All Items Now</button>
+            </Link>
         </div>
     );
 }
