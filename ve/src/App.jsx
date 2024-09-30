@@ -19,6 +19,7 @@ import VisitPage from './pages/VisitPage.jsx';
 import PricingPage from './pages/PricingPage.jsx';
 import UploadDetailsPage from './pages/UploadDetailsPage.jsx';
 import StallDetailsPage from './pages/UserStallDetailsPage.jsx';
+import CartPage from './pages/Cart.jsx';
 
 axios.defaults.baseURL =  import.meta.env.VITE_API_BASE_URL;
 axios.defaults.withCredentials= true ;
@@ -43,9 +44,9 @@ function App() {
         <Route path="/exhibition/:exbId" element={<ExhibtionPage />} />
         <Route path="/exhibitions/:exbId/:exbTitle" element={<Exhibition />} />
         <Route path="/exhibitions/:exbId/:exbTitle/:stallId" element={<ExhibitionStall />} />
-        <Route path="/pricing/:photolink" element={<PricingPage />} />
+        <Route path="/pricing/:imgId" element={<PricingPage />} />
         <Route path="/uploadDetails/:stallId/:imgId" element={<UploadDetailsPage />} />
-
+        <Route path="/cart" element={<CartPage />} />
 
 
       </Route>

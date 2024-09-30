@@ -1,33 +1,53 @@
+import axios from "axios";
+import { useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
+
 export default function PricingPage(){
 
-    /*const [selectedPhoto, setSelectedPhoto] = useState(null);
 
+    const [name , setName] = useState('');
+    const [description, setDescription]=useState('');
+    const [price, setPrice]=useState('');
 
-    const handlePhotoClick = (link) => {
-        setSelectedPhoto(link);
-    };  
+    const {imgId} = useParams();
+    const location = useLocation();
 
-    const closeOverlay = () => {
-        setSelectedPhoto(null);
+    axios.get(`/uploadDetails/${imgId}`).then(response =>{
+        const {data} = response;
+            setName(data[0].name);
+            setPrice(data[0].price);
+            setDescription(data[0].description);
+    })
+
+    const addToCart = async (ev) => {
+        ev.preventDefault();
+        try {
+            const cartItem = { imgId, name, description, price };
+            await axios.post('/cart', cartItem);
+            alert('Item added to cart!');
+        } catch (error) {
+            console.error('Failed to add to cart', error);
+        }
     };
-    {selectedPhoto && (
-                <div key={selectedPhoto.link} className="overlay shadow-2xl" onClick={closeOverlay}>
-                    <div className="overlay-content shadow-2xl rounded-2xl justify-center items-center" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-button" onClick={closeOverlay}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 -mx-2 -my-2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                        </svg>
-                        </button>
-                        <Link to={`/pricing/${selectedPhoto.link}`}>
-                        <Image src={selectedPhoto} alt="Selected" className="selected-photo shadow-2xl rounded-2xl" />
-                        </Link>
-                        
-                    </div>
-                </div>
-            )}*/
+    
     return(
-        <div>
-            hi
+        <div className="container mx-auto mt-8 place-items-center">
+
+            <div className="image-container">
+                <img src={`https://virtual-exhibition-app.s3.amazonaws.com/`+imgId} alt={name} className="w-full h-auto rounded-lg" />
+            </div>
+            <h2 className="text-xl bg-gray-300 rounded-lg mt-4">Name: {name}</h2>
+            <p className="text-sm rounded-lg  text-gray-700 mt-2">Description: {description}</p>
+            <p className="text-lg text-gray-800 mt-2 font-semibold">Price: ₹{price}</p>
+            <div className="flex gap-5">
+            <Link to={`/`}>
+            <button className="primary space-x-5 m-5 ">Buy Now</button>
+            </Link>
+            <Link to={`/`}>
+            <button onClick={addToCart} className="primary space-x-5 m-5">Add to Cart</button>
+            </Link>
+            </div>
+            
         </div>
     )
 }  

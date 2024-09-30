@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const imageDownloader = require('image-downloader');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
+const Cart = require('./models/cart.js');
 const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3')
 const fs = require('fs');
 const mime = require('mime-types');
@@ -249,7 +250,7 @@ app.get('/api/stall/:stallId' , async (req, res) =>{
     const {stallId} = req.params;
     res.json(await CreateStall.findById(stallId));  
 }) ; 
-
+   
 app.get('/api/uploadDetails/:imgId' , async (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {imgId} = req.params;
@@ -301,7 +302,7 @@ app.post('/api/stall', async (req, res)=>{
         })  
     
 })
-
+        
 /*app.post('/api/uploadDetails', async (req, res)=>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
@@ -390,8 +391,54 @@ app.delete('/api/stalls/:id', async (req, res) => {
     } catch (error) {
         res.status(500).send({ error: 'Failed to delete stall' });
     }
-});     
+});
 
+app.post('/api/cart', async (req, res) => {
+
+    const {token} = req.cookies;
+    const { imgId, name, description, price } = req.body;
+
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    try {
+      let cart = await Cart.findOne({ userId: userData.id });
+      if (!cart) {
+        cart = new Cart({ userId:userData.id, items: [] });
+      }
+
+      
+        const existingItem = cart.items.find(item => item.imgId === imgId);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.items.push({ imgId, name, description, price });
+      }
+      
+      await cart.save();
+      res.json(cart);
+    
+      
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to add item to cart' });
+    }
+})
+  });
+ 
+  app.get('/api/cart', async (req, res) => {
+    const {token} = req.cookies;
+    const { user } = req.params;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    try {
+      const cart = await Cart.findOne( { userId: userData.id } );
+      if (cart) {
+        res.json(cart);
+      } else {
+        res.status(404).json({ error: 'Cart not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch cart' });
+    }
+})
+  });
                 
    
 app.listen(4000);      
