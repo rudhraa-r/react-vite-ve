@@ -405,7 +405,6 @@ app.post('/api/cart', async (req, res) => {
         cart = new Cart({ userId:userData.id, items: [] });
       }
 
-      
         const existingItem = cart.items.find(item => item.imgId === imgId);
       if (existingItem) {
         existingItem.quantity += 1;
@@ -439,6 +438,28 @@ app.post('/api/cart', async (req, res) => {
     }
 })
   });
+
+  app.delete('/api/cart/:imgId', async (req, res) => {
+    const { token } = req.cookies;
+    const { imgId } = req.params;
+  
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+  
+      try {
+        const cart = await Cart.findOne({ userId: userData.id });
+        if (cart) {
+          cart.items = cart.items.filter(item => item.imgId !== imgId);
+          await cart.save();
+          res.json(cart);
+        } else {
+          res.status(404).json({error: 'Cart not found' });
+        }
+      } catch (error) {
+        res.status(500).json({error: 'Failed to delete item from cart' });
+      }
+    });
+  });
+  
                 
    
 app.listen(4000);      
