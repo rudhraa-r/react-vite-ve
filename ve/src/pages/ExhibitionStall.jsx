@@ -34,6 +34,12 @@ export default function ExhibitionStall(){
                         <Image key={link} src={link} className="stall-photo rounded-2xl shadow-2xl"  />
                         </Link>
                     ))}
+
+                    {stall.videos && stall.videos.map((link) => (
+                        <Link to={`/pricing/${getImageName(link)}` }>
+                        <video key={link} src={link} className="stall-photo rounded-2xl shadow-2xl"  />
+                        </Link>
+                    ))}
                 </div>
             </div>
 

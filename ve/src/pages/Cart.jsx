@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {UserContext} from "../UserContext.jsx";
 import { Link } from "react-router-dom";
+//import { loadStripe } from '@stripe/stripe-js';
+//const stripePromise = loadStripe('your_stripe_publishable_key');
 
 export default function CartPage() {
     const [cartItems, setCartItems] = useState([]);
@@ -28,6 +30,23 @@ export default function CartPage() {
     };
 
     const grossTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+    const handleCheckout = async () => {
+        try {
+            const stripe = await stripePromise;
+            const response = await axios.post('/create-checkout-session', { cartItems });
+            const sessionId = response.data.id;
+            
+            const { error } = await stripe.redirectToCheckout({
+                sessionId,
+            });
+            if (error) {
+                console.error("Error redirecting to checkout:", error);
+            }
+        } catch (error) {
+            console.error("Checkout failed:", error);
+        }
+    };
 
     if (loading) {
         return <div>Loading...</div>;
@@ -63,9 +82,9 @@ export default function CartPage() {
             <div className="text-lg font-semibold mt-4">
                 Gross Total: ₹{grossTotal}
             </div>
-            <Link to={`/`}>
-            <button className="primary space-x-5 m-5 ">Buy All Items Now</button>
-            </Link>
+            
+            <button onClick={handleCheckout}  className="primary space-x-5 m-5 ">Buy All Items Now</button>
+            
         </div>
     );
 }

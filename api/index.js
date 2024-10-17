@@ -15,7 +15,7 @@ const Cart = require('./models/cart.js');
 const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3')
 const fs = require('fs');
 const mime = require('mime-types');
-    
+const Stripe = require('stripe');   
 
     
 require('dotenv').config()
@@ -57,6 +57,46 @@ async function uploadtoS3(path , originalFilename, mimetype){
     }))
     return `https://${bucket}.s3.amazonaws.com/${newFilename}`;
 }
+
+async function uploadVideoToS3(path, originalFilename, mimetype) {
+    const client = new S3Client({
+        region: 'eu-north-1',
+        credentials: {
+            accessKeyId: process.env.S3_ACCESS_KEY,
+            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+        },
+    });
+
+    const parts = originalFilename.split('.');
+    const ext = parts[parts.length - 1];
+    const newFilename = Date.now() + '.' + ext; // Ensures a unique filename
+
+    await client.send(new PutObjectCommand({
+        Bucket: bucket,
+        Body: fs.readFileSync(path),
+        Key: `videos/${newFilename}`, // Store videos in a separate folder
+        ContentType: mimetype,
+        ACL: 'public-read'
+    }));
+
+    return `https://${bucket}.s3.amazonaws.com/videos/${newFilename}`; // Return the video URL
+}
+
+const videoMiddleware = multer({ dest: '/tmp' }); // Temporary directory for uploads
+
+// Route for uploading videos
+app.post('/api/upload-video', videoMiddleware.array('videos', 100), async (req, res) => {
+    const uploadedVideos = [];
+
+    for (let i = 0; i < req.files.length; i++) {
+        const { path, originalname, mimetype } = req.files[i];
+        const url = await uploadVideoToS3(path, originalname, mimetype);
+        uploadedVideos.push(url);
+    }
+
+    res.json(uploadedVideos); // Return array of uploaded video URLs
+});
+
   
 app.get('/api/test', (req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
@@ -288,7 +328,7 @@ app.post('/api/uploadcover', photosMiddleware.single('coverphoto') ,async (req, 
 app.post('/api/stall', async (req, res)=>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies;
-    const {name,addedPhotos,exhibitionId, } = req.body;
+    const {name,addedPhotos,addedVideos,exhibitionId, } = req.body;
 
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if (err) throw err ;
@@ -296,6 +336,7 @@ app.post('/api/stall', async (req, res)=>{
                 owner:userData.id,
                 name, 
                 photos: addedPhotos,
+                videos: addedVideos,
                 exhibition: exhibitionId,
             });
             res.json(createStallDoc);
@@ -356,13 +397,14 @@ app.get('/api/create/:exbTitle/:stallId' , async (req, res) =>{
 app.put('/api/stall', async(req, res) =>{
     mongoose.connect(process.env.MONGO_URL);
     const {token} = req.cookies; 
-    const { stallId, name, addedPhotos,exhibitionId} = req.body;
+    const { stallId, name, addedPhotos,addedVideos,exhibitionId} = req.body;
     const StallDoc = await CreateStall.findById(stallId);
     jwt.verify(token, jwtSecret, {}, async (err, userData) => {
         if(userData.id === StallDoc.owner.toString()){
             StallDoc.set({
                 name, 
                 photos:addedPhotos,
+                videos: addedVideos,
                 exhibition: exhibitionId,
             });
             await StallDoc.save();       
@@ -394,7 +436,7 @@ app.delete('/api/stalls/:id', async (req, res) => {
 });
 
 app.post('/api/cart', async (req, res) => {
-
+   
     const {token} = req.cookies;
     const { imgId, name, description, price } = req.body;
 
@@ -460,6 +502,35 @@ app.post('/api/cart', async (req, res) => {
     });
   });
   
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+app.post('/api/checkout', async (req, res) => {
+  const { token } = req.cookies;
+  
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) return res.status(403).json({ error: 'Invalid token' });
+    
+    try {
+      const cart = await Cart.findOne({ userId: userData.id });
+      if (!cart || cart.items.length === 0) {
+        return res.status(400).json({ error: 'Cart is empty' });
+      }
+
+      const totalAmount = cart.items.reduce((total, item) => total + (item.price * item.quantity), 0) * 100; // Convert to paise for Stripe
+      
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: totalAmount,
+        currency: 'inr',
+        payment_method_types: ['card'],
+      });
+
+      res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to create payment intent' });
+    }
+  });
+});
+
                 
    
 app.listen(4000);      
