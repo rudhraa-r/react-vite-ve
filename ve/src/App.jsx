@@ -20,6 +20,7 @@ import PricingPage from './pages/PricingPage.jsx';
 import UploadDetailsPage from './pages/UploadDetailsPage.jsx';
 import StallDetailsPage from './pages/UserStallDetailsPage.jsx';
 import CartPage from './pages/Cart.jsx';
+import ARView from './pages/AR-mode.jsx';
 
 axios.defaults.baseURL =  import.meta.env.VITE_API_BASE_URL;
 axios.defaults.withCredentials= true ;
@@ -47,6 +48,8 @@ function App() {
         <Route path="/pricing/:imgId" element={<PricingPage />} />
         <Route path="/uploadDetails/:stallId/:imgId" element={<UploadDetailsPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/ar-view/:stallId" element={<ARView />} />
+
 
 
       </Route>

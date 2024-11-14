@@ -15,7 +15,7 @@ const Cart = require('./models/cart.js');
 const {S3Client, PutObjectCommand} = require('@aws-sdk/client-s3')
 const fs = require('fs');
 const mime = require('mime-types');
-const Stripe = require('stripe');   
+const Stripe = require('stripe');        
 
     
 require('dotenv').config()
@@ -522,7 +522,7 @@ app.post('/api/checkout', async (req, res) => {
         amount: totalAmount,
         currency: 'inr',
         payment_method_types: ['card'],
-      });
+      });   
 
       res.json({ clientSecret: paymentIntent.client_secret });
     } catch (error) {

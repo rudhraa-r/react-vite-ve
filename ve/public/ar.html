@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>3D Exhibition with Preloaded Assets</title>
+    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    <style>
+      .responsive-image {
+        width: 20vw; /* Adjust width */
+        height: auto; /* Maintain aspect ratio */
+        transition: scale 0.3s; 
+      }
+      .responsive-image:hover {
+        scale: 1.1; /* Scale up on hover */
+      }
+      /* Tooltip Styles */
+      .tooltip {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 5px;
+        border-radius: 5px;
+        font-size: 14px;
+        display: none; /* Hidden by default */
+        pointer-events: none; /* Ignore pointer events */
+      }
+    </style>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene>
+      <!-- Preload assets -->
+      <a-assets> 
+        <!-- GLTF Model -->
+        <img id="background-video"  src="https://virtual-exhibition-app.s3.eu-north-1.amazonaws.com/1731526738879.png" crossorigin="anonymous"></img>
+        <a-asset-item id="model" src="https://rudhraa-r.github.io/ar-testing/Decorative_Picture_Frame_ukkpdhqbw_High.gltf"></a-asset-item>
+      </a-assets>
+   
+      <a-sky src="#background-video" position="0 400 -2000" rotation="0 195"></a-sky> 
+      
+      <!-- Camera -->
+      <a-entity position="0 230 0" rotation="0 0 0">
+        <a-camera></a-camera>
+      </a-entity> 
+
+      <!-- Static Image and Video Placement (Exactly as per Template) -->
+      <a-entity id="content-container"></a-entity>
+
+      <script>
+        // Template positions and rotations
+        const templateLayout = [
+          { position: [-480, 675, -1900], rotation: [0, 10, 0], scale: [650, 450, 450] },
+          { position: [750, 720, -1900], rotation: [0, -10, 0], scale: [830, 550, 450] },
+          { position: [-380, -130, -1900], rotation: [0, 10, 0], scale: [750, 650, 550] },
+          { position: [780, -180, -2000], rotation: [0, -30, 0], scale: [850, 750, 550] },
+          { position: [2350, 1020, -1900], rotation: [0, -60, 0], scale: [1100, 850, 450] },
+          { position: [-3000, 850, -2000], rotation: [0, 50, 0], scale: [450, 450, 550], isVideo: true }
+        ];
+
+        // Retrieve the stall data from localStorage
+        const stallData = JSON.parse(localStorage.getItem("stallData"));
+
+        if (stallData) {
+          const photos = stallData.photos || [];
+          const videos = stallData.videos || [];
+          const contentContainer = document.getElementById("content-container");
+
+          // Limit the number of photos/videos based on template
+          const totalSlots = templateLayout.length;
+
+          // Assign photos/videos to template slots without repetition
+          const mediaToDisplay = [
+            ...photos.slice(0, totalSlots), // Only slice up to the number of available slots
+            ...videos.slice(0, totalSlots)
+          ];
+
+          // Iterate over the template layout and assign photos or videos to positions
+          templateLayout.forEach((layout, index) => {
+            // Skip if there's no media to display for this slot
+            if (mediaToDisplay[index]) {
+              let mediaElement;
+              const media = mediaToDisplay[index];
+
+              if (layout.isVideo) {
+                // Add video if position requires video
+                mediaElement = document.createElement("a-video");
+                mediaElement.setAttribute("src", media); // Set the video source
+                mediaElement.setAttribute("autoplay", "true");
+                mediaElement.setAttribute("loop", "true");
+                mediaElement.setAttribute("width", "4");
+                mediaElement.setAttribute("height", "2.25");
+              } else {
+                // Add image for other positions
+                mediaElement = document.createElement("a-image");
+                mediaElement.setAttribute("src", media); // Set the image source
+              }
+
+              // Apply the position, rotation, and scale from the template
+              mediaElement.setAttribute("position", layout.position.join(" "));
+              mediaElement.setAttribute("rotation", layout.rotation.join(" "));
+              mediaElement.setAttribute("scale", layout.scale.join(" "));
+
+              // Add the element to the scene
+              contentContainer.appendChild(mediaElement);
+            }
+          });
+        } else {
+          console.error("No stall data found in localStorage");
+        }
+      </script>
+    </a-scene> 
+  </body>
+</html>
