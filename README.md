@@ -16,3 +16,11 @@ Additionally , we are working on the following :
 The tools used to build this : ReactJS , Vite , Node , MongoDB , Tailwind CSS , AWS S3 Bucket,Vercel, and Github .
 -
  - Link to the page : [virtual-exhibition-app.vercel.app](https://virtual-exhibition-app.vercel.app/)
+
+Dependencies to install in ve folder (npm install 'name'):
+-
+  -axios,mime-types,date-fns,react-router-dom,aframe.
+  
+Dependencies to install in api folder (npm install 'name'):
+-
+  -bcrypt,cookie-parser,multer,cors,dotenv,express,http,image-downloader,jsonwebtoken,mime-types,mongoose,nodemon,stripe,@aws-sdk/client-s3.
