@@ -19,8 +19,8 @@ The tools used to build this : ReactJS , Vite , Node , MongoDB , Tailwind CSS , 
 
 Dependencies to install in ve folder (npm install 'name'):
 -
-  -axios,mime-types,date-fns,react-router-dom,aframe.
+  - axios,mime-types,date-fns,react-router-dom,aframe.
   
 Dependencies to install in api folder (npm install 'name'):
 -
-  -bcrypt,cookie-parser,multer,cors,dotenv,express,http,image-downloader,jsonwebtoken,mime-types,mongoose,nodemon,stripe,@aws-sdk/client-s3.
+  - bcrypt,cookie-parser,multer,cors,dotenv,express,http,image-downloader,jsonwebtoken,mime-types,mongoose,nodemon,stripe,@aws-sdk/client-s3.
